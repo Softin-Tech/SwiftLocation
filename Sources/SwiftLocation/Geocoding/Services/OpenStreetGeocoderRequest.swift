@@ -50,6 +50,9 @@ public class OpenStreetGeocoderRequest: GeocoderRequest {
                 var places = [Place]()
                 if let rawArray = json as? [Any] {
                     places = rawArray.compactMap { Place(openStreet: $0) }
+                } else if let dict = json as? [String: String], let error = dict["error"], !error.isEmpty {
+                    self.stop(reason: .generic(error), remove: true)
+                    return
                 } else {
                     places.append(Place(openStreet: json))
                 }
